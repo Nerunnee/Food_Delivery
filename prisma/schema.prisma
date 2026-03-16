@@ -45,7 +45,33 @@ model Food {
   ingredients      String
   category         FoodCategory @relation(fields: [foodCategoryId], references: [id])
   foodCategoryId   Int
+  foodOrderItems   FoodOrderItem[]
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 }
 
+model FoodOrder {
+  id               Int      @id @default(autoincrement())
+  totalPrice       String
+  status           Status   @default(PENDING)
+  foodOrderItems   FoodOrderItem[]
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model FoodOrderItem {
+  id               Int       @id @default(autoincrement())
+  quantity         Int
+  food             Food      @relation(fields: [foodId], references: [id])
+  foodId           Int
+  order            FoodOrder @relation(fields: [foodOrderId], references: [id])
+  foodOrderId      Int
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+}
+
+enum Status { 
+  PENDING
+  CANCELLED
+  DELIVERED 
+} 

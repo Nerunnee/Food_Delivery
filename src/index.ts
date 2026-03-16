@@ -1,138 +1,237 @@
 import express, { Application, Request, Response } from "express";
 import { prisma } from "./lib/prisma";
+import usersRouter from "./router/users.router";
 
 const app: Application = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
-app.get("/users", async (req: Request, res: Response) => {
-  const users = await prisma.user.findMany();
-  res.json({ users });
-});
+app.use("/users", usersRouter);
 
-app.get("/users/:id", async (req: Request, res: Response) => {
-  const { id } = req.params;
+// app.get("/categories", async (req: Request, res: Response) => {
+//   try {
+//     const categories = await prisma.foodCategory.findMany({
+//       include: {
+//         foods: true,
+//       },
+//     });
 
-  const user = await prisma.user.findFirst({
-    where: { id: Number(id) },
-  });
+//     res.json({ categories });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(400).json({ message: "invalid inputs" });
+//   }
+// });
 
-  res.json({ user });
-});
+// app.get("/categories/:id", async (req: Request, res: Response) => {
+//   const { id } = req.params;
 
-app.post("/users", async (req: Request, res: Response) => {
-  const { email, password, age, phoneNumber, address, role } = req.body;
+//   try {
+//     const categories = await prisma.foodCategory.findFirst({
+//       where: {
+//         id: Number(id),
+//       },
+//       include: {
+//         foods: true,
+//       },
+//     });
 
-  try {
-    const user = await prisma.user.create({
-      data: {
-        email,
-        password,
-        age,
-        phoneNumber,
-        address,
-        role,
-      },
-    });
+//     res.json({ categories });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(400).json({ message: "invalid inputs" });
+//   }
+// });
 
-    res.json({ user });
-  } catch (error) {
-    res.send(error);
-  }
-});
+// app.post("/categories", async (req: Request, res: Response) => {
+//   const { name } = req.body;
 
-app.put("/users/:id", async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const { email, password, age, phoneNumber, address, role } = req.body;
+//   try {
+//     const newCategory = await prisma.foodCategory.create({ data: { name } });
 
-  try {
-    const updatedUser = await prisma.user.update({
-      where: { id: Number(id) },
-      data: {
-        email,
-        password,
-        age,
-        phoneNumber,
-        address,
-        role,
-      },
-    });
+//     res.json({ newCategory });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(400).json({ message: "invalid inputs" });
+//   }
+// });
 
-    res.json({ updatedUser });
-  } catch (error) {
-    res.send(error);
-  }
-});
+// app.put("/categories/:id", async (req: Request, res: Response) => {
+//   const { id } = req.params;
+//   const { name } = req.body;
 
-app.delete("/users/:id", async (req: Request, res: Response) => {
-  const { id } = req.params;
+//   try {
+//     const updatedCategory = await prisma.foodCategory.update({
+//       where: { id: Number(id) },
+//       data: { name },
+//     });
 
-  const deletedUser = await prisma.user.delete({ where: { id: Number(id) } });
+//     res.json({ updatedCategory });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(400).json({ message: "invalid inputs" });
+//   }
+// });
 
-  res.json({ message: "success", deletedUser });
-});
+// app.delete("/categories/:id", async (req: Request, res: Response) => {
+//   const { id } = req.params;
 
-app.get("/categories", async (req: Request, res: Response) => {
-  const categories = await prisma.foodCategory.findMany({
-    include: {
-      foods: true,
-    },
-  });
+//   try {
+//     await prisma.foodCategory.delete({
+//       where: { id: Number(id) },
+//     });
 
-  res.json({ categories });
-});
+//     res.json({ success: true });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(400).json({ message: "invalid inputs" });
+//   }
+// });
 
-app.get("/categories/:id", async (req: Request, res: Response) => {
-  const { id } = req.params;
+// app.get("/foods", async (req: Request, res: Response) => {
+//   try {
+//     const foods = await prisma.food.findMany();
 
-  const categories = await prisma.foodCategory.findFirst({
-    where: {
-      id: Number(id),
-    },
-    include: {
-      foods: true,
-    },
-  });
+//     res.json({ foods });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(400).json({ message: "invalid inputs" });
+//   }
+// });
 
-  res.json({ categories });
-});
+// app.get("/foods/:id", async (req: Request, res: Response) => {
+//   const { id } = req.params;
 
-app.post("/categories", async (req: Request, res: Response) => {
-  const { name } = req.body;
+//   try {
+//     const food = await prisma.food.findFirst({ where: { id: Number(id) } });
 
-  const newCategory = await prisma.foodCategory.create({ data: { name } });
+//     res.json({ food });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(400).json({ message: "invalid inputs" });
+//   }
+// });
 
-  res.json({ newCategory });
-});
+// app.post("/foods", async (req: Request, res: Response) => {
+//   const { foodName, price, image, ingredients, foodCategoryId } = req.body;
 
-app.put("/categories/:id", async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const { name } = req.body;
+//   try {
+//     const newfood = await prisma.food.create({
+//       data: { foodName, price, image, ingredients, foodCategoryId },
+//     });
 
-  const updatedCategory = await prisma.foodCategory.update({
-    where: { id: Number(id) },
-    data: { name },
-  });
+//     res.json({ newfood });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(400).json({ message: "invalid inputs" });
+//   }
+// });
 
-  res.json({ updatedCategory });
-});
+// app.put("/foods/:id", async (req: Request, res: Response) => {
+//   const { id } = req.params;
+//   const { foodName, price, image, ingredients, foodCategoryId } = req.body;
 
-app.delete("/categories/:id", async (req: Request, res: Response) => {
-  const { id } = req.params;
+//   try {
+//     const updatedfood = await prisma.food.update({
+//       where: { id: Number(id) },
+//       data: { foodName, price, image, ingredients, foodCategoryId },
+//     });
 
-  try {
-    await prisma.foodCategory.delete({
-      where: { id: Number(id) },
-    });
+//     res.json({ updatedfood });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(400).json({ message: "invalid inputs" });
+//   }
+// });
 
-    res.json({ success: true });
-  } catch (error) {
-    console.error(error);
-    res.status(400).json({ message: "invalid inputs" });
-  }
-});
+// app.delete("/foods/:id", async (req: Request, res: Response) => {
+//   const { id } = req.params;
+
+//   try {
+//     await prisma.food.delete({
+//       where: { id: Number(id) },
+//     });
+
+//     res.json({ success: true });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(400).json({ message: "invalid inputs" });
+//   }
+// });
+
+// app.get("/orders", async (req: Request, res: Response) => {
+//   try {
+//     const orders = await prisma.foodOrder.findMany({
+//       include: { foodOrderItems: true },
+//     });
+
+//     res.json({ orders });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(400).json({ message: "invalid inputs" });
+//   }
+// });
+
+// app.get("/orders/:id", async (req: Request, res: Response) => {
+//   const { id } = req.params;
+
+//   try {
+//     const order = await prisma.foodOrder.findFirst({
+//       where: { id: Number(id) },
+//       include: { foodOrderItems: true },
+//     });
+
+//     res.json({ order });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(400).json({ message: "invalid inputs" });
+//   }
+// });
+
+// export type OrderItem = {
+//   foodId: number;
+//   quantity: number;
+// };
+
+// app.post("/orders", async (req: Request, res: Response) => {
+//   const { orderItems }: { orderItems: OrderItem[] } = req.body;
+
+//   const totalPrice = await calcFoodTotalPrice(
+//     orderItems.map((order) => order.foodId),
+//   );
+
+//   const order = await prisma.foodOrder.create({
+//     data: {
+//       totalPrice: totalPrice.toString(),
+//       status: "PENDING",
+//       foodOrderItems: {
+//         createMany: {
+//           data: orderItems,
+//         },
+//       },
+//     },
+//   });
+
+//   res.json(order);
+// });
+
+// const calcFoodTotalPrice = async (foodIds: number[]) => {
+//   const foods = await prisma.food.findMany({
+//     where: {
+//       id: {
+//         in: foodIds,
+//       },
+//     },
+//     select: {
+//       price: true,
+//     },
+//   });
+
+//   const totalPrice = foods.reduce((a, b) => Number(a) + Number(b.price), 0);
+
+//   return totalPrice;
+// };
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
