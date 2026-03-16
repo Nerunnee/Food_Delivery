@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { prisma } from "../../lib/prisma";
 
-export const updateCategory = async (req: Request, res: Response) => {
+export const updatedCategory = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { name } = req.body;
 
