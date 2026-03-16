@@ -1,6 +1,7 @@
 import express, { Application, Request, Response } from "express";
 import { prisma } from "./lib/prisma";
 import usersRouter from "./router/users.router";
+import categoriesRouter from "./router/category.router";
 
 const app: Application = express();
 const PORT = process.env.PORT || 3000;
@@ -8,86 +9,7 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 
 app.use("/users", usersRouter);
-
-// app.get("/categories", async (req: Request, res: Response) => {
-//   try {
-//     const categories = await prisma.foodCategory.findMany({
-//       include: {
-//         foods: true,
-//       },
-//     });
-
-//     res.json({ categories });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(400).json({ message: "invalid inputs" });
-//   }
-// });
-
-// app.get("/categories/:id", async (req: Request, res: Response) => {
-//   const { id } = req.params;
-
-//   try {
-//     const categories = await prisma.foodCategory.findFirst({
-//       where: {
-//         id: Number(id),
-//       },
-//       include: {
-//         foods: true,
-//       },
-//     });
-
-//     res.json({ categories });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(400).json({ message: "invalid inputs" });
-//   }
-// });
-
-// app.post("/categories", async (req: Request, res: Response) => {
-//   const { name } = req.body;
-
-//   try {
-//     const newCategory = await prisma.foodCategory.create({ data: { name } });
-
-//     res.json({ newCategory });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(400).json({ message: "invalid inputs" });
-//   }
-// });
-
-// app.put("/categories/:id", async (req: Request, res: Response) => {
-//   const { id } = req.params;
-//   const { name } = req.body;
-
-//   try {
-//     const updatedCategory = await prisma.foodCategory.update({
-//       where: { id: Number(id) },
-//       data: { name },
-//     });
-
-//     res.json({ updatedCategory });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(400).json({ message: "invalid inputs" });
-//   }
-// });
-
-// app.delete("/categories/:id", async (req: Request, res: Response) => {
-//   const { id } = req.params;
-
-//   try {
-//     await prisma.foodCategory.delete({
-//       where: { id: Number(id) },
-//     });
-
-//     res.json({ success: true });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(400).json({ message: "invalid inputs" });
-//   }
-// });
+app.use("/categories", categoriesRouter);
 
 // app.get("/foods", async (req: Request, res: Response) => {
 //   try {
