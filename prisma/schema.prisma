@@ -20,6 +20,7 @@ model User {
   role     Role     @default(USER) 
   password String
   age      Int?
+  orders   FoodOrder[]
   address  String?
   phoneNumber String
 }
@@ -52,6 +53,8 @@ model Food {
 
 model FoodOrder {
   id               Int      @id @default(autoincrement())
+  userId           Int
+  user             User      @relation(fields: [userId], references: [id])
   totalPrice       String
   status           Status   @default(PENDING)
   foodOrderItems   FoodOrderItem[]
