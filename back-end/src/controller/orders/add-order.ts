@@ -7,13 +7,14 @@ export type OrderItem = {
 };
 
 export const addOrder = async (req: Request, res: Response) => {
-  const { orderItems }: { orderItems: OrderItem[] } = req.body;
+  const { userId, orderItems }: { orderItems: OrderItem[]; userId: number } =
+    req.body;
 
   const totalPrice = await calcFoodTotalPrice(orderItems);
 
   const order = await prisma.foodOrder.create({
     data: {
-      userId: 1,
+      userId: userId,
       totalPrice: totalPrice.toString(),
       status: "PENDING",
       foodOrderItems: {
@@ -28,9 +29,9 @@ export const addOrder = async (req: Request, res: Response) => {
 };
 
 const calcFoodTotalPrice = async (orderItems: OrderItem[]) => {
-  const foodIds = orderItems.map((order) => order.foodId);
+  const foodIds = orderItems.map((orderItem) => orderItem.foodId);
 
-  const foods = await prisma.food.findMany({
+  const foodsPrice = await prisma.food.findMany({
     where: {
       id: {
         in: foodIds,
@@ -42,7 +43,9 @@ const calcFoodTotalPrice = async (orderItems: OrderItem[]) => {
     },
   });
 
-  const priceMap = new Map(foods.map((food) => [food.id, Number(food.price)]));
+  const priceMap = new Map(
+    foodsPrice.map((food) => [food.id, Number(food.price)]),
+  );
 
   const totalPrice = orderItems.reduce((sum, item) => {
     const unitPrice = priceMap.get(item.foodId) ?? 0;
