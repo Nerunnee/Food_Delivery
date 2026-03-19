@@ -6,6 +6,8 @@ import jwt from "jsonwebtoken";
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
+  const secretToken = process.env.NERUNNEEJWT;
+
   try {
     const user = await prisma.user.findUnique({
       where: {
@@ -25,7 +27,7 @@ export const login = async (req: Request, res: Response) => {
         {
           data: { userId: user.id, email: user.email, role: user.role },
         },
-        "secret",
+        secretToken!,
         { expiresIn: "1h" },
       );
 
