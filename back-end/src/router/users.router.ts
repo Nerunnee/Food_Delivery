@@ -4,6 +4,7 @@ import { getUserById } from "../controller/users/get-user-by-id";
 import { addUser } from "../controller/users/add-user";
 import { updatedUser } from "../controller/users/update-user";
 import { deletedUser } from "../controller/users/delete-user";
+import { login } from "../controller/users/login";
 
 const router = express.Router();
 
@@ -12,5 +13,6 @@ router.get("/:id", getUserById);
 router.post("/", addUser);
 router.put("/:id", updatedUser);
 router.delete("/:id", deletedUser);
+router.post("/login", login);
 
 export default router;
