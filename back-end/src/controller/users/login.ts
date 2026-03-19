@@ -1,12 +1,13 @@
 import { Request, Response } from "express";
 import { prisma } from "../../lib/prisma";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   try {
-    const user = await prisma.user.findFirst({
+    const user = await prisma.user.findUnique({
       where: {
         email,
       },
@@ -17,9 +18,21 @@ export const login = async (req: Request, res: Response) => {
       return;
     }
 
-    const result = await bcrypt.compare(password, user.password);
+    const isMatch = await bcrypt.compare(password, user.password);
 
-    res.json({ result });
+    if (isMatch) {
+      const accessToken = jwt.sign(
+        {
+          data: { userId: user.id, email: user.email, role: user.role },
+        },
+        "secret",
+        { expiresIn: "1h" },
+      );
+
+      res.status(200).json({ accessToken });
+    } else {
+      res.status(400).json({ message: "invalid credentials" });
+    }
   } catch (error) {
     console.error(error);
     res.status(400).json({ message: "invalid inputs" });
