@@ -22,14 +22,20 @@ export const getOrdersAdmin = async (req: Request, res: Response) => {
   try {
     const decoded = jwt.verify(accessToken, secretToken) as Token;
 
-    if (decoded.data.role === "ADMIN") {
-      const orders = await prisma.foodOrder.findMany({});
-
-      res.json({ orders });
+    if (decoded.data.role !== "ADMIN") {
+      return res.status(400).json({ message: "invalid" });
     }
+
+    const orders = await prisma.foodOrder.findMany({
+      include: {
+        foodOrderItems: true,
+      },
+    });
+
+    res.json({ orders });
   } catch (error) {
     console.error(error);
     res.send(error);
-    // res.status(400).json({ message: "invalid inputs" });
+    res.status(400).json({ message: "invalid inputs" });
   }
 };
