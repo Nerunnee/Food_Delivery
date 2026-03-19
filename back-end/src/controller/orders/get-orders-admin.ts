@@ -10,7 +10,7 @@ type Token = {
   };
 };
 
-export const getOrdersRole = async (req: Request, res: Response) => {
+export const getOrdersAdmin = async (req: Request, res: Response) => {
   const { authorization } = req.headers;
 
   const accessToken = authorization?.split(" ")[1];
