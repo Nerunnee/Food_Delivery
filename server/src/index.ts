@@ -5,7 +5,7 @@ import foodsRouter from "./router/foods.router";
 import orderRouter from "./router/orders.router";
 
 const app: Application = express();
-const PORT = process.env.PORT || 3000;
+const PORT = 3000;
 
 app.use(express.json());
 
